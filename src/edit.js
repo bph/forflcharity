@@ -32,17 +32,24 @@ import './editor.scss';
 
 import apiFetch from '@wordpress/api-fetch';
 
-apiFetch ( { path: '/forflcharity/v1/charity-number/' } )
-	.then console.log( data );
-	} );
+
 
 export default function Edit() {
+	
+	apiFetch ( { path: '/forflcharity/v1/charity-number/' } )
+	.then ( ( charitynumber )=> {
+		console.log( charitynumber );
+	} );
+
+	apiFetch ( { path: '/forflcharity/v1/charity-text/' } )
+	.then ( ( charitytext )=> {
+		mycharitytext === charitytext
+		console.log( charitytext );
+	} );
+
 	return (
 		<p { ...useBlockProps() }>
-			{ __(
-				`Display Florida Charity Copy – hello from the editor! {$charitynumbmer}`,
-				'forflcharity'
-			) }
+		`{charitytext}. Our Charity number is {charitynumbers}.`
 		</p>
 	);
 }
