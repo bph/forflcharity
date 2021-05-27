@@ -1,0 +1,15 @@
+{
+	"apiVersion": 2,
+	"name": "wp4good/forflcharity",
+	"title": "Display Florida Charity Copy",
+	"category": "text",
+	"icon": "palmtree",
+	"description": "Florida's registered charities need to display mandatory copy on their websites when soliciting donations. This plugin provides the block and block-patterns.",
+	"supports": {
+		"html": false
+	},
+	"textdomain": "forflcharity",
+	"editorScript": "file:./build/index.js",
+	"editorStyle": "file:./build/index.css",
+	"style": "file:./build/style-index.css"
+}

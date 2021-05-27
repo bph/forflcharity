@@ -1,0 +1,24 @@
+{
+	"name": "forflcharity",
+	"version": "0.1.0",
+	"description": "Florida's registered charities need to display mandtory copy on website when soliciting for donations. This plugin provides the block and block-patterns",
+	"author": "Birgit Pauli-Haack",
+	"license": "GPL-2.0-or-later",
+	"main": "build/index.js",
+	"scripts": {
+		"build": "wp-scripts build",
+		"format": "wp-scripts format",
+		"lint:css": "wp-scripts lint-style",
+		"lint:js": "wp-scripts lint-js",
+		"start": "wp-scripts start",
+		"packages-update": "wp-scripts packages-update"
+	},
+	"dependencies": {
+		"@wordpress/block-editor": "^6.0.0",
+		"@wordpress/blocks": "^9.0.0",
+		"@wordpress/i18n": "^4.0.0"
+	},
+	"devDependencies": {
+		"@wordpress/scripts": "^16.0.0"
+	}
+}
