@@ -18,7 +18,7 @@ import './style.scss';
  * Internal dependencies
  */
 import Edit from './edit';
-import save from './save';
+//import save from './save';
 
 
 /**
@@ -32,8 +32,5 @@ registerBlockType( 'wp4good/forflcharity', {
 	 */
 	edit: Edit,
 
-	/**
-	 * @see ./save.js
-	 */
-	save,
+	/** No save entry because a dynmic block / rendered on the frontend by php */
 } );

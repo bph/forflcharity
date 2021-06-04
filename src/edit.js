@@ -1,55 +1,123 @@
-/**
- * Retrieves the translation of text.
- *
- * @see https://developer.wordpress.org/block-editor/packages/packages-i18n/
- */
-import { __ } from '@wordpress/i18n';
-
-/**
- * React hook that is used to mark the block wrapper element.
- * It provides all the necessary props like the class name.
- *
- * @see https://developer.wordpress.org/block-editor/packages/packages-block-editor/#useBlockProps
- */
+import api from '@wordpress/api';
+//import apiFetch from '@wordpress.api-fetch';
 import { useBlockProps } from '@wordpress/block-editor';
+import { Placeholder, Spinner, TextControl,} from '@wordpress/components';
+import ServerSideRender from '@wordpress/server-side-render';
+import { select, subscribe } from '@wordpress/data';
+import { Component } from '@wordpress/element';
 
-/**
- * Lets webpack process CSS, SASS or SCSS files referenced in JavaScript files.
- * Those files can contain any CSS code that gets applied to the editor.
- *
- * @see https://www.npmjs.com/package/@wordpress/scripts#using-css
- */
+
 import './editor.scss';
 
+const fltext = "A COPY OF THE OFFICIAL REGISTRATION AND FINANCIAL INFORMATION MAYBE BE OBTAINED FROM THE DIVISION OF CONSUMER SERVICES BY CALLING TOLL-FREE (800-435-7352) WITHIN THE STATE. REGISTRATION DOES NOT IMPLY ENDORSEMENT, APPROVAL, OR RECOMMENDATION BY THE STATE. Website: <a href='https://floridaconsumerhelp.com'>FloridaConsumerHelp</a>"
+
+class CharityFields extends Component {
+    constructor() {
+        super( ...arguments );
+
+        this.state = {
+            isAPILoaded: false,
+            number: '',
+            text: `${fltext}`,
+        };
+    };
+
+    componentDidMount() {
+
+        subscribe( () => {
+            const { number, text } = this.state;
+
+            // no change on autosaves
+            if ( select( 'core/editor' ).isAutosavingPost() ){
+                return;
+            }
+
+            // only proceed on manual saves
+            if (! select( 'core/editor' ).isSavingPost() ) {
+                return;
+            }
+
+            const settings = new api.models.Settings( {
+                    [ 'forflcharity_text' ]: text,
+                    [ 'forflcharity_number' ]:number,
+            } );
+            settings.save();
+        });
+
+        api.loadPromise.then( () => {
+            this.settings = new api.models.Settings();
+
+            const { isAPILoaded } = this.state;
+
+            if ( isAPILoaded === false ) {
+                this.settings.fetch().then ( ( response ) =>{
+                    this.setState( {
+                        number: response [ 'forflcharity_number' ],
+                        text: response[ 'forflcharity_text' ],
+                        isAPILoaded: true,
+                    });
+                });
+            }
+        });
+    }
+
 /**
- * The edit function describes the structure of your block in the context of the
- * editor. This represents what the editor will render when the block is used.
- *
- * @see https://developer.wordpress.org/block-editor/developers/block-api/block-edit-save/#edit
- *
- * @return {WPElement} Element to render.
+ * Render the interface
  */
 
-import apiFetch from '@wordpress/api-fetch';
+    render() {
+        const {
+            number,
+            text,
+            isAPILoaded,
+        } = this.state;
 
 
+        const { setAttributes } = this.props;
 
-export default function Edit() {
-	
-	apiFetch ( { path: '/forflcharity/v1/charity-number/' } )
-	.then ( ( charitynumber )=> {
-		console.log( charitynumber );
-	} );
+        if ( !isAPILoaded ) {
+            return (
+                <Placeholder>
+                    <Spinner/>
+                </Placeholder>
+            );
+        }
 
-	apiFetch ( { path: '/forflcharity/v1/charity-text/' } )
-	.then ( ( charitytext )=> {
-		mycharitytext === charitytext
-		console.log( charitytext );
-	} );
+        return (
 
-	return (
-		<p { ...useBlockProps() }>
-		`{charitytext}. Our Charity number is {charitynumbers}.`
-		</p>
-	);
-}
+            <div>
+                <TextControl  
+                    label="Your Charity Number: "
+                    onChange={ number => {
+                        this.setState( { number } );
+                        setAttributes( { number } )
+                    }}
+                    value={ number }
+                />
+                <TextControl  
+                    label="Read only Text"
+                    readOnly = "true" 
+                    onChange={ text => {
+                        this.setState( { text } );
+                        setAttributes( { text } )
+                    }}
+                    value={ text }
+                />
+            </div>
+            );
+        }
+    }
+
+    export default function EDIT ( props ) {
+        return(
+            <div className="modern" { ...useBlockProps() }>
+                <CharityFields { ...props }/>
+                <p><em>A preview of the text</em></p>
+                <ServerSideRender
+                    block="wp4good/forflcharity"
+                    attributes={ props.attributes }
+                    />
+            </div>
+        );
+    }
+

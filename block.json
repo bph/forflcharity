@@ -11,5 +11,6 @@
 	"textdomain": "forflcharity",
 	"editorScript": "file:./build/index.js",
 	"editorStyle": "file:./build/index.css",
+	"renderCallback": "forflcharity_display_block",
 	"style": "file:./build/style-index.css"
 }
